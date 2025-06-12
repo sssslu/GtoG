@@ -3,6 +3,7 @@ import time
 from datetime import datetime
 from dotenv import load_dotenv
 import google.generativeai as genai
+import winsound
 
 # ====== .env 로드 ======
 print(">> 환경 변수 로드 중...")
@@ -40,10 +41,10 @@ def generate_new_topic(previous_topics):
     prompt = f"""다음은 지금까지 사용된 주제입니다:
 
 {topic_list}
-
-이 목록과 겹치지 않도록, 흥미로운 과학 또는 사회 관련 대화 주제를 하나만 추천해주세요. 짧고 명확하게."""
-
-    model = genai.GenerativeModel("gemini-1.5-pro-latest")
+이 주제들과 겹치지 않도록, 흥미롭고 신선한 과학 또는 기술 관련 주제를 하나만 제시해 주세요.  
+**주제만 간결하게 출력해 주세요. 설명, 이유, 분석은 하지 마세요.**
+"""
+    model = genai.GenerativeModel("gemini-2.0-flash")
     response = model.generate_content(prompt)
     return response.text.strip()
 
@@ -53,8 +54,10 @@ def build_prompt(topic, log, last_message, speaker, turn):
     tone_hint = ""
     if speaker == "Taylor 님":
         tone_hint = "당신은 감성적이고 공감력 있는 스타일입니다."
+        winsound.Beep(1200, 400)  # 높은 삡 (1200Hz, 200ms)
     else:
         tone_hint = "당신은 논리적이고 분석적인 스타일입니다."
+        winsound.Beep(600, 400)   # 낮은 삡 (600Hz, 200ms)
 
     closing_hint = ""
     if turn >= MAX_TURNS - 1:
@@ -80,7 +83,7 @@ def build_prompt(topic, log, last_message, speaker, turn):
 # ====== Gemini 응답 ======
 def call_gemini(prompt):
     try:
-        model = genai.GenerativeModel("gemini-1.5-pro-latest")
+        model = genai.GenerativeModel("gemini-2.0-flash")
         chat = model.start_chat()
         response = chat.send_message(prompt)
         return response.text.strip()
