@@ -17,7 +17,7 @@ genai.configure(api_key=GEMINI_API_KEY)
 # ====== 파일 설정 ======
 TOPIC_LOG_FILE = "topics.txt"
 LOG_FILE = f"debate_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.txt"
-MAX_TURNS = 7
+MAX_TURNS = 9
 
 # ====== 파일 I/O ======
 def append_to_log(text):
@@ -98,6 +98,7 @@ def main():
 
     print(">> 새로운 주제 생성 중...")
     topic = generate_new_topic(previous_topics)
+    topic = "AGI 와 SGI 의 도래 시기 및 최신 뉴스"
     save_new_topic(topic)
 
     print(f"\n오늘의 대화 주제: {topic}")
@@ -113,6 +114,7 @@ def main():
             log = f.read()
 
         prompt = build_prompt(topic, log, last_message, speaker, turn)
+        
         print(">> Gemini 호출 중...")
         reply = call_gemini(prompt)
 
